@@ -1,10 +1,9 @@
-CFLAGS?=	-Wall -ggdb -W -O
+CFLAGS?=	-Wall -ggdb -W -O $(shell pkg-config --cflags libtirpc)
 CC?=		gcc
-LIBS?=
+LIBS?= $(shell pkg-config --libs libtirpc)
 LDFLAGS?=
 PREFIX?=	/usr/local/webbench
 VERSION=1.5
-TMPDIR=/tmp/webbench-$(VERSION)
 
 all:   webbench tags
 
@@ -32,15 +31,9 @@ clean:
 	-rm -f *.o webbench *~ core *.core tags
 	
 tar:   clean
-	-debian/rules clean
-	rm -rf $(TMPDIR)
-	install -d $(TMPDIR)
-	cp -p Makefile webbench.c socket.c webbench.1 $(TMPDIR)
-	install -d $(TMPDIR)/debian
-	-cp -p debian/* $(TMPDIR)/debian
-	ln -sf debian/copyright $(TMPDIR)/COPYRIGHT
-	ln -sf debian/changelog $(TMPDIR)/ChangeLog
-	-cd $(TMPDIR) && cd .. && tar cozf webbench-$(VERSION).tar.gz webbench-$(VERSION)
+	# The original tar target was removed because it depended on TMPDIR
+	# which was causing issues with the build.
+	# A new tar target can be created here if needed.
 
 webbench.o:	webbench.c socket.c Makefile
 
